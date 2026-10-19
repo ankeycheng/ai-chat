@@ -1,0 +1,89 @@
+# One-command production-like deployment: postgres + redis + migrate job + backend + nginx LB.
+#   cp .env.example .env && edit DEEPSEEK_API_KEY / POSTGRES_PASSWORD && ./deploy.sh
+# Project name: ai-chat. Postgres role/db: ai_chat (underscore; hyphens invalid in PG identifiers).
+name: ai-chat
+
+x-backend-env: &backend-env
+  APP_PROFILE: prod
+  DB_BACKEND: postgres
+  BROKER_BACKEND: redis
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: "5432"
+  POSTGRES_USER: ${POSTGRES_USER:-ai_chat}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+  POSTGRES_DB: ${POSTGRES_DB:-ai_chat}
+  REDIS_URL: redis://redis:6379/0
+  DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:?set DEEPSEEK_API_KEY in .env}
+  DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-deepseek-flash}
+  DEEPSEEK_TITLE_MODEL: ${DEEPSEEK_TITLE_MODEL:-deepseek-flash}
+  REASONING_EFFORT: ${REASONING_EFFORT:-high}
+  SEARCH_PROVIDER: ${SEARCH_PROVIDER:-deepseek}
+  EXPECTED_REPLICAS: ${BACKEND_REPLICAS:-1}
+  CORS_ORIGINS: ${CORS_ORIGINS:-}
+  LOG_LEVEL: ${LOG_LEVEL:-INFO}
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    ports: ["15432:5432"]
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ai_chat}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-ai_chat}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--save", "60 1000", "--maxclients", "10000"]
+    volumes: [redisdata:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  migrate:
+    build: ./backend
+    image: ai-chat-backend:latest
+    pull_policy: build
+    command: ["alembic", "upgrade", "head"]
+    environment: *backend-env
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: "no"
+
+  backend:
+    build: ./backend
+    image: ai-chat-backend:latest
+    pull_policy: build
+    restart: unless-stopped
+    environment: *backend-env
+    deploy:
+      replicas: ${BACKEND_REPLICAS:-1}
+    stop_grace_period: 20s
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+      postgres: { condition: service_healthy }
+
+  nginx:
+    build: ./frontend
+    image: ai-chat-web:latest
+    pull_policy: build
+    restart: unless-stopped
+    ports: ["${HTTP_PORT:-9123}:80"]
+    depends_on:
+      backend: { condition: service_healthy }
+
+volumes:
+  pgdata:
+    name: ai-chat_pgdata
+  redisdata:
+    name: ai-chat_redisdata

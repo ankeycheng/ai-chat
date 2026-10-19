@@ -1,0 +1,156 @@
+{
+  "base_url": "http://127.0.0.1:8088",
+  "checks": {
+    "streamed_reply": true,
+    "thinking_on_has_reasoning": true,
+    "thinking_off_no_reasoning": true,
+    "web_search_sources": true,
+    "web_search_cited": true,
+    "multi_turn_recall": true,
+    "title_generated": true,
+    "search_conversations": true
+  },
+  "ready": {
+    "status": "ready",
+    "checks": {
+      "database": "ok",
+      "broker": "ok"
+    },
+    "instance": "9e0fcfd26542-1"
+  },
+  "session_id": "dca172e4-65f2-4c3b-9cfa-300f8bd75c78",
+  "turns": [
+    {
+      "request_id": "bb856582-8950-4231-8ea4-33d2e7728d23",
+      "prompt": "你好！请记住：我的名字叫安琪，我是一名 AI 开发工程师。请简短回复确认。",
+      "thinking": false,
+      "web_search": false,
+      "accept_ms": 21.4,
+      "first_delta_s": 0.84,
+      "terminal": "done",
+      "terminal_data": {
+        "request_id": "bb856582-8950-4231-8ea4-33d2e7728d23",
+        "message_id": "03b11cc8-afd2-404d-b2c6-f411e00fe22e",
+        "finish_reason": "stop"
+      },
+      "n_delta": 24,
+      "content_chars": 39,
+      "reasoning_chars": 0,
+      "notices": [],
+      "sources": [],
+      "persisted_matches_deltas": true,
+      "answer_preview": "你好，安琪！很高兴认识你，已记下你是一名 AI 开发工程师。有什么可以帮你的？"
+    },
+    {
+      "request_id": "b0549294-8d6d-498a-8d60-a11a65693730",
+      "prompt": "9.11 和 9.8 哪个大？简要回答。",
+      "thinking": true,
+      "web_search": false,
+      "accept_ms": 18.9,
+      "first_delta_s": 1.04,
+      "terminal": "done",
+      "terminal_data": {
+        "request_id": "b0549294-8d6d-498a-8d60-a11a65693730",
+        "message_id": "aea87c4b-a9a4-4cb4-80bc-a2e67b960c57",
+        "finish_reason": "stop"
+      },
+      "n_delta": 80,
+      "content_chars": 26,
+      "reasoning_chars": 140,
+      "notices": [],
+      "sources": [],
+      "persisted_matches_deltas": true,
+      "answer_preview": "9.8 更大（9.8 = 9.80 > 9.11）。"
+    },
+    {
+      "request_id": "230d96d5-038d-4d59-b3b8-ee6738b100bb",
+      "prompt": "DeepSeek 最近发布了什么新的 API 能力？请引用来源。",
+      "thinking": false,
+      "web_search": true,
+      "accept_ms": 16.1,
+      "first_delta_s": 1.7,
+      "terminal": "done",
+      "terminal_data": {
+        "request_id": "230d96d5-038d-4d59-b3b8-ee6738b100bb",
+        "message_id": "6375074b-8011-4421-8a9b-618d2301e038",
+        "finish_reason": "stop"
+      },
+      "n_delta": 179,
+      "content_chars": 336,
+      "reasoning_chars": 0,
+      "notices": [],
+      "sources": [
+        {
+          "id": "S1",
+          "title": "DeepSeek上新了",
+          "url": "https://finance.sina.cn/2026-10-17/detail-inivpspz6432648.d.html",
+          "snippet": "10月17日，DeepSeek官方发布消息，DeepSeek V4.1 Flash现已更新至V4.1-Flash-1017版本。与此同时 ... 本次新版本发布DeepSeek API新增对Search与Fetch接口的支持，相关能力正式向公众开放。两个接口价格均为5元/千次。",
+          "site_name": "新浪财经",
+          "site_icon": "https://cdn.deepseek.com/site-icons/sina.cn",
+          "date": "2026-10-16T16:00:00+00:00"
+        },
+        {
+          "id": "S2",
+          "title": "DeepSeek新版本上线",
+          "url": "http://www.jingjiribao.cn/static/detail.jsp?id=690604",
+          "snippet": "Flash现已更新至V4.1－Flash－1017版本，与此同时，官方网页端、App与API模型已同步变更为新模型。相比上一版本的DeepSeek V4.1 Flash ... 本次新版本发布，DeepSeek API新增对Search与Fetch接口的支持，相关能力正式向公众开放。两个接口价格均为5元／千次。",
+          "site_name": "jingjiribao.cn",
+          "site_icon": "https://cdn.deepseek.com/site-icons/jingjiribao.cn",
+          "date": "2026-10-16T16:00:00+00:00"
+        },
+        {
+          "id": "S3",
+          "title": "DeepSeek发布新版本 - 今日头条",
+          "url": "https://www.toutiao.com/article/7697649748009878042/?wid=1792252917472",
+          "snippet": "DeepSeek官方发布消息，DeepSeek V4.1Flash现已更新至 V4.1-Flash-1017 版本。与此同时 ... 本次新版本发布DeepSeek API新增对Search与Fetch接口的支持，相关能力正式向公众开放。两个接口价格均为5元/千次 ... （来源：央视财经 姚蓝）",
+          "site_name": "今日头条",
+          "site_icon": "https://cdn.deepseek.com/site-icons/toutiao.com",
+          "date": "2026-10-16T16:00:00+00:00"
+        },
+        {
+          "id": "S4",
+          "title": "DeepSeek V4.1 Flash新版本发布 许愿式编程一键成真",
+          "url": "https://stcn.com/article/detail/4223928.html",
+          "snippet": "人民财讯10月17日电，DeepSeek消息，DeepSeek V4.1 Flash现已更新至V4.1-Flash-1017版本，官方网页端、APP与API模型已同步变更为新模型。 DeepSeek V4.1 Flash 1017通过基于自反馈的强化学习（RL）训练技术，提升了在游戏开发、3D建模等方面从零开始构建完整项目的能力，能够支持实现更多“许愿式”编程任务及项目开发请求。",
+          "site_name": "证券时报",
+          "site_icon": "https://cdn.deepseek.com/site-icons/stcn.com",
+          "date": "2026-10-16T16:00:00+00:00"
+        },
+        {
+          "id": "S5",
+          "title": "DeepSeek V4.1 Flash新版本发布",
+          "url": "https://m.bjnews.com.cn/detail/1792228837129628.html",
+          "snippet": "DeepSeek V4.1 Flash 1017通过基于自反馈的强化学习（RL）训练技术，提升了在游戏开发 ... 能够支持实现更多“许愿式”编程任务及项目开发请求。 本次新版本发布DeepSeek API新增对Search与Fetch接口的支持，相关能力正式向公众开放。两个接口价格均为5元/千次。",
+          "site_name": "新京报",
+          "site_icon": "https://cdn.deepseek.com/site-icons/bjnews.com.cn",
+          "date": "2026-10-16T16:00:00+00:00"
+        }
+      ],
+      "persisted_matches_deltas": true,
+      "answer_preview": "DeepSeek 近期发布的 API 新能力是 **Search 与 Fetch 两个接口**，已正式向公众开放 [S1][S2]。\n\n相关要点：\n\n- **发布版本**：DeepSeek V4.1 Flash 更新至 V4.1-Flash-1017 版本，网页端、App 与 API 模型同步变更 [S2][S5]。\n- **计费方式**：Search 和 Fetch 均按**成功请求次数**计费，不按 token 或返回结果条数计费，价格为 **5 元/千次** [S2][S3]。\n\n另外，该版本在性能上也有提升，包括缩短任务运行时间与输出长度，并针对 DeepSeek Harness、腾讯"
+    },
+    {
+      "request_id": "855f93da-c4aa-4e35-8e21-5d2275657815",
+      "prompt": "我叫什么名字？我的职业是什么？只回答这两个信息。",
+      "thinking": false,
+      "web_search": false,
+      "accept_ms": 13.2,
+      "first_delta_s": 0.98,
+      "terminal": "done",
+      "terminal_data": {
+        "request_id": "855f93da-c4aa-4e35-8e21-5d2275657815",
+        "message_id": "aece8a9f-257d-4a7f-b90f-1bc962efe551",
+        "finish_reason": "stop"
+      },
+      "n_delta": 12,
+      "content_chars": 18,
+      "reasoning_chars": 0,
+      "notices": [],
+      "sources": [],
+      "persisted_matches_deltas": true,
+      "answer_preview": "名字：安琪；职业：AI 开发工程师。"
+    }
+  ],
+  "title": "记住安琪的身份",
+  "all_passed": true
+}

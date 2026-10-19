@@ -1,0 +1,35 @@
+{
+ "generated_at": "2026-10-19 (Asia/Shanghai)",
+ "stack": "docker compose: nginx 1.27 round-robin (no sticky) -> backend x2 (APP_PROFILE=prod) + postgres:17 + redis:7",
+ "cross_replica": {
+  "global_sse_upstream": "172.18.0.5:8000",
+  "create_upstreams": [
+   "172.18.0.4:8000",
+   "172.18.0.5:8000"
+  ],
+  "global_created_events": 4,
+  "send_status": 202,
+  "send_upstream": "172.18.0.4:8000",
+  "stream1_upstream": "172.18.0.5:8000",
+  "stream2_upstream": "172.18.0.4:8000",
+  "no_dup_ids": true,
+  "terminal": "done",
+  "persisted_equals_streamed": true,
+  "chars": 140
+ },
+ "replica_kill_mid_generation": {
+  "action": "docker kill -s KILL <replica running the worker> 3s after accept",
+  "run_terminal": "interrupted (lease stale, repaired by surviving replica monitor)",
+  "seconds_to_idle": 46.2,
+  "session_accepts_new_message_after": 202,
+  "note": "interrupted runs persist no assistant message (spec §7); partial text only in stream replay"
+ },
+ "nginx": {
+  "metrics_public": "403",
+  "spa_fallback": "200",
+  "upstream_round_robin": [
+   "172.18.0.4",
+   "172.18.0.5"
+  ]
+ }
+}
