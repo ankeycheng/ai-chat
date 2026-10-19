@@ -114,7 +114,7 @@ cp .env.example .env      # 填写 DEEPSEEK_API_KEY 与 POSTGRES_PASSWORD
 
 ```bash
 cd backend
-uv run ruff check . && uv run pytest -q   # 117 个用例；postgres-redis 模式需要本机 PG(ai_chat/ai_chat, 库 ai_chat_test) 与 Redis(db 15)
+uv run ruff check . && uv run pytest -q   # 默认双模式共 126 个用例（sqlite-memory + postgres-redis）；另 frontend vitest 14；postgres-redis 需要本机 PG(ai_chat/ai_chat, 库 ai_chat_test) 与 Redis(db 15)
 # 只跑 SQLite+内存模式： uv run pytest -q -k "not postgres-redis"
 
 cd frontend

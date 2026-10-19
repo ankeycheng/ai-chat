@@ -888,7 +888,7 @@ onError(request_id, code, message, id):
 | `LOG_LEVEL` / `LOG_FORMAT` ★ | `INFO` / 随 profile | `json` 或 `text` |
 | `METRICS_ENABLED` ★ | `true` | 暴露 `/api/metrics` |
 
-Compose 专用（根目录 `.env`，见 `.env.example`）：`HTTP_PORT`（默认 8080）、`BACKEND_REPLICAS`（默认 2）、`POSTGRES_PASSWORD`（必填）。
+Compose 专用（根目录 `.env`，见 `.env.example`）：`HTTP_PORT`（默认 9123）、`BACKEND_REPLICAS`（默认 2）、`POSTGRES_PASSWORD`（必填）。
 
 ### 11.1 负载均衡要求
 
@@ -922,7 +922,7 @@ Compose 专用（根目录 `.env`，见 `.env.example`）：`HTTP_PORT`（默认
 
 | 文件 | 内容 |
 |---|---|
-| `docker-compose.yml` | `postgres:17-alpine`（`pg_isready` 健康检查，命名卷）、`redis:7-alpine`（AOF，`redis-cli ping` 健康检查）、一次性 `migrate`（`alembic upgrade head`，`service_completed_successfully` 门控）、`backend`（`deploy.replicas: ${BACKEND_REPLICAS:-2}`，`APP_PROFILE=prod`，`EXPECTED_REPLICAS` 同步副本数，`/api/ready` 健康检查，`stop_grace_period: 20s`）、`nginx`（前端静态 + 反向代理，端口 `${HTTP_PORT:-8080}`，依赖 backend healthy） |
+| `docker-compose.yml` | `postgres:17-alpine`（`pg_isready` 健康检查，命名卷）、`redis:7-alpine`（AOF，`redis-cli ping` 健康检查）、一次性 `migrate`（`alembic upgrade head`，`service_completed_successfully` 门控）、`backend`（`deploy.replicas: ${BACKEND_REPLICAS:-2}`，`APP_PROFILE=prod`，`EXPECTED_REPLICAS` 同步副本数，`/api/ready` 健康检查，`stop_grace_period: 20s`）、`nginx`（前端静态 + 反向代理，端口 `${HTTP_PORT:-9123}`，依赖 backend healthy） |
 | `backend/Dockerfile` | `python:3.13-slim` + `uv 0.13.1`；`uv sync --frozen --no-dev` 按 `uv.lock` 精确安装；非 root（uid 10001）；`HEALTHCHECK` 调用 `/api/ready`；`uvicorn --factory app.main:app_factory --proxy-headers --timeout-graceful-shutdown 15` |
 | `frontend/Dockerfile` | `node:22-alpine` 执行 `npm ci && npm run build` → `nginx:1.27-alpine` 承载 `dist` 与 `nginx.conf` |
 | `.env.example` | 所有可调变量及默认值；`DEEPSEEK_API_KEY` 与 `POSTGRES_PASSWORD` 留空/占位，不含任何真实密钥 |
@@ -943,7 +943,7 @@ Compose 专用（根目录 `.env`，见 `.env.example`）：`HTTP_PORT`（默认
 - 依赖、虚拟环境与命令全部由 uv 管理：`backend/pyproject.toml`（`[tool.uv] package = false`，应用不作为包安装）+ 提交到仓库的 `backend/uv.lock`。MUST
 - 常用命令：`uv sync`（安装含 dev 依赖）、`uv run uvicorn --factory app.main:app_factory`、`uv run pytest`、`uv run ruff check .`、`uv run ruff format .`、`uv run alembic upgrade head`、`uv add <pkg>`（更新锁文件）。
 - CI/镜像中使用 `uv sync --frozen`（锁文件与 pyproject 不一致即失败），不得使用 `pip install -r`。MUST
-- Python 版本：`requires-python >= 3.12`，镜像与开发环境使用 3.13。
+- Python 版本：`requires-python >= 3.13`，镜像与开发环境使用 3.13。
 - 代码质量：`ruff check` 与 `ruff format --check` 零告警为合入条件（行宽 110）。
 
 ---
@@ -960,19 +960,24 @@ Compose 专用（根目录 `.env`，见 `.env.example`）：`HTTP_PORT`（默认
 | T04 联网搜索成功 | `web_search=true` 发送问题 | 调用 Search API；上下文来源有标题和 URL；回答不伪造引用 |
 | T05 联网搜索失败 | 模拟 Search API timeout/5xx | 收到 notice，继续无搜索生成，最终可 done |
 | T06 刷新续传 | 生成中刷新页面 | 从活动 run 起点重放并重建临时消息，最终不丢不重 |
+| T06b 默认游标续传 | 生成中订阅 `/stream`（不带 `after` / `Last-Event-ID`） | 默认从活动 run 起点续传；不重放 `start`，能收到后续 delta 并最终 done |
 | T07 双窗口广播 | 同会话两个窗口同时打开 | 两边最终内容及消息顺序一致；游标相互独立 |
 | T08 多实例广播 | 两个窗口经 LB 落在不同实例 | 同 T07，无会话粘性仍可工作 |
 | T09 幂等并发 | 同 session 同 request_id 同时 POST 两次 | 仅一个任务、一条 user message，不重复调用模型 |
 | T10 幂等键冲突 | 同 request_id 改变 content 或 options 再提交 | 返回 409 `IDEMPOTENCY_KEY_REUSED` |
 | T11 同会话互斥 | 第一轮生成中提交另一个 request_id | 返回 409，不新增用户消息 |
+| T11b 并行互斥 | 同会话同时提交多个不同 request_id | 仅一个 202，其余 409；历史仅一条 user+assistant |
 | T12 旧游标重连 | 使用旧 `after` 重连 | 不重复显示消息；活动任务缺口按任务起点恢复或触发明确恢复流程 |
 | T13 游标格式 | `after=abc` 或无效负数 | 400 `INVALID_REQUEST` |
 | T14 Stream ID 边界 | 比较 `...-9` 与 `...-10` | 按数值顺序比较，游标不倒退 |
 | T15 心跳 | 空闲 30 秒 | 至少收到一次 ping；ping 不改变 Last-Event-ID |
 | T16 上游失败 | 注入 DeepSeek 502/timeout | run 变为 failed，收到 error，UI 复位，不写空 assistant 消息 |
+| T16b 中途失败保留增量 | 上游在已输出若干 delta 后失败（含非 done 类 `finish_reason` / timeout） | 已写入 Stream 的 delta 可回放；收到 error、无 done；不写 assistant 消息 |
 | T17 实例崩溃 | 生成中 kill worker 所在实例 | 已 XADD 的 delta 可回放；心跳过期后转为 interrupted 并发布 error；不自动重跑 |
+| T17-lite 租约过期打断 | 构造心跳已过期的活动 run（不真实 SIGKILL） | 监控器标为 `interrupted` 并发布 `GENERATION_INTERRUPTED`；已写 delta 可回放；锁按 token 释放 |
 | T18 锁过期与安全释放 | 模拟旧 worker 锁过期、新 owner 获锁，旧 worker尝试释放 | 旧 owner 不能续租或删除新 owner 的锁 |
-| T19 终态发布窗口 | DB 终态提交后、XADD 前杀进程；XADD 后、DB 标记 published 前杀进程 | 修复扫描器最终发布/确认唯一逻辑终态；不重复 XADD |
+| T19a 终态未发布 | DB 已提交终态但尚未 XADD（模拟发布窗口崩溃） | 修复扫描器补发唯一终态事件；重复扫描不重复 XADD |
+| T19b 已发布未打标 | 终态已 XADD 但 DB `terminal_event_published` 未置位 | 修复扫描器确认并打标；不重复 XADD，会话 `last_event_id` 收敛 |
 | T20 长回答裁剪 | 生成超过 5,000 个 delta 的回答 | 活动期间事件不被裁剪；完成后新任务启动才裁剪旧事件 |
 | T21 删除会话 | 空闲会话删除；生成中会话删除 | 空闲成功；生成中 409；无任务继续写入已删除会话 |
 | T22 历史与 SSE 竞态 | history 返回期间收到 done，或 done 后 history 已含 assistant | 按 request_id/message_id 合并，不重复显示两条 assistant |
@@ -1024,7 +1029,7 @@ Compose 专用（根目录 `.env`，见 `.env.example`）：`HTTP_PORT`（默认
 
 - [x] 所有 P0 功能需求通过；思考开启和关闭均通过。
 - [x] §10 的 C1–C17 红线通过代码审查，重点检查游标比较、用户消息插入顺序、锁 owner 校验和终态修复。
-- [x] §12.1 的 T01–T04、T06–T16、T19、T22、T23 通过（两种模式）。
+- [x] §12.1 的 T01–T04、T06–T16、T19a/b、T22、T23 通过（两种模式）。
 - [x] §12.1 的 T17/T18/T20/T21 通过（T17 含真实 SIGKILL 子进程与 Docker `kill` 副本两种方式）。
 - [x] 双实例 + 无粘性 LB 下 T08 通过（pytest 双实例 + Docker nginx 双副本）。
 - [ ] 500 并发 SSE 压测达到 NFR-03 —— **未执行**，不对该指标作通过声明。
