@@ -2,10 +2,10 @@
 
 一个最小但完整的 AI 聊天应用：多会话、思考开关、联网搜索（DeepSeek 独立 Search API）、SSE 流式输出、刷新续传、多窗口实时同步（会话列表 + 消息）、会话搜索、自动标题，ChatGPT/Grok 风格界面并适配手机。后端可以多副本部署在无粘性负载均衡之后，也可以用 Docker 一键部署。
 
-- 规格说明：[`docs/spec.md`](docs/spec.md)
+- 规格说明：[`docs/spec.md`](docs/spec.md)（总入口/索引；章节按功能拆在 [`docs/spec/`](docs/spec/)）
 - 验收证据：`docs/e2e-report-*.json`、`docs/screenshots/*.png`
 
-> ⚠️ **无鉴权**：本版本只适合内网或受控演示环境，不要直接暴露到公网（见“已知限制”）。
+> ⚠️ **无鉴权**：本版本只适合内网或受控演示环境，不要直接暴露到公网（见 [已知限制](docs/spec/12-limitations-and-adrs.md)）。
 
 ---
 
@@ -31,7 +31,7 @@ ai-chat/
 │  ├─ src/{api,lib,hooks,components,styles}
 │  ├─ scripts/ui-e2e.mjs         无头 Chrome UI 端到端 + 截图
 │  ├─ nginx.conf · Dockerfile
-├─ docs/                         spec.md · e2e 报告 · screenshots/
+├─ docs/                         spec.md（入口）· spec/（分章）· e2e 报告 · screenshots/
 └─ docker-compose.yml · deploy.sh · Makefile · .env.example
 ```
 
@@ -82,7 +82,7 @@ cp .env.example .env      # 填写 DEEPSEEK_API_KEY 与 POSTGRES_PASSWORD
 
 ## 4. 关键配置
 
-完整列表见 [`docs/spec.md`](docs/spec.md)「部署与配置」一章。最常用的配置：
+完整列表见 [`docs/spec/10-deploy.md`](docs/spec/10-deploy.md)（入口仍为 [`docs/spec.md`](docs/spec.md)）。最常用的配置：
 
 | 变量 | 默认 | 说明 |
 |---|---|---|
