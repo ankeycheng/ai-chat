@@ -1,4 +1,4 @@
-"""Broker abstraction (spec §4.2 A5): event streams + coordination primitives."""
+"""Broker abstraction (A5): event streams + coordination primitives."""
 
 from __future__ import annotations
 
@@ -36,7 +36,7 @@ class Broker(Protocol):
         """Atomically XADD a terminal event unless ``marker_key`` exists.
 
         Returns ``(stream_id, newly_published)``; when the marker exists, returns the
-        previously published id and does NOT add a second entry (spec §7.3).
+        previously published id and does NOT add a second entry (C9).
         Also applies ``ttl_seconds`` to the stream (FR-D04).
         """
         ...

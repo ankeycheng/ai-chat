@@ -38,7 +38,7 @@ markers = ["live: tests that hit the real DeepSeek API (need DEEPSEEK_API_KEY)"]
 [tool.ruff]
 line-length = 110
 target-version = "py313"
-extend-exclude = ["scripts/docker_*.py"]  # ad-hoc Docker smoke scripts (spec §11.3)
+extend-exclude = ["scripts/docker_*.py"]  # ad-hoc Docker smoke scripts (T36)
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "ASYNC"]

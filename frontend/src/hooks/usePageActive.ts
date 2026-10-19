@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 /**
  * false once the tab has been hidden for `graceMs`. Background tabs then release their SSE
  * connections (browsers allow only ~6 HTTP/1.1 connections per origin across ALL tabs);
- * on return the normal load/recovery flow (§9.3) runs again, so nothing is lost.
+ * on return the normal load/recovery flow (FR-E08) runs again, so nothing is lost.
  */
 export function usePageActive(graceMs = 30_000): boolean {
   const [active, setActive] = useState(() => typeof document === 'undefined' || !document.hidden)

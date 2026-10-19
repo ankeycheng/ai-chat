@@ -1,4 +1,4 @@
-"""Database engine factory — switches between PostgreSQL and SQLite (spec §11.3)."""
+"""Database engine factory — switches between PostgreSQL and SQLite (DB_BACKEND)."""
 
 from __future__ import annotations
 

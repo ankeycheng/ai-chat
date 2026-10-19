@@ -1,4 +1,4 @@
-"""Broker contract tests for memory and Redis implementations (A5, T18, §7.3)."""
+"""Broker contract tests for memory and Redis implementations (A5, T18, C9)."""
 
 import asyncio
 import os

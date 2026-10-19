@@ -1,5 +1,5 @@
 /**
- * Per-conversation message state & merge algorithm (spec §9.4).
+ * Per-conversation message state & merge algorithm.
  * Pure reducer: history and SSE may overlap; messages are merged by message_id /
  * (request_id, role) and never blindly appended. Temp assistant messages are keyed by
  * request_id and replaced by the persisted message once history contains it, or once

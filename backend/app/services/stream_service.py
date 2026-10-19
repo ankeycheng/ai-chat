@@ -1,4 +1,4 @@
-"""SSE streams (spec §5.5 + v1.2 §5.10).
+"""SSE streams: per-session stream (FR-E01) and global sync stream (FR-Y01).
 
 Per-session stream: one continuous XREAD BLOCK loop does replay *and* live reading (A3/C1),
 cursor advanced to the last delivered ID (C2), ping without id (FR-E04).

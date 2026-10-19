@@ -1,4 +1,4 @@
-"""Pure unit tests: stream IDs (T14/C7), config rules (§11.2), payloads (FR-T01/T02), context rules (§5.9)."""
+"""Pure unit tests: stream IDs (T14/C7), config rules (V1–V7), payloads (FR-T01/FR-T02), context rules (FR-C01–FR-C07)."""
 
 import uuid
 from datetime import UTC, datetime
@@ -43,7 +43,7 @@ def test_resolve_cursor_takes_newer():
     assert resolve_cursor(None, None) is None
 
 
-# ---------------------------------------------------------------- §11.2 startup validation
+# ---------------------------------------------------------------- startup validation (V1–V7, T32)
 def test_memory_broker_forbids_multi_instance():
     with pytest.raises(ConfigError):
         Settings(broker_backend="memory", db_backend="postgres", expected_replicas=2).validate_startup()
@@ -79,7 +79,7 @@ def test_profiles_switch_backends():
     assert dev.broker_backend == "memory" and dev.is_sqlite
     prod = Settings(app_profile="prod", deepseek_api_key="k", _env_file=None)
     assert prod.broker_backend == "redis" and not prod.is_sqlite
-    assert Settings(broker_impl="redis", _env_file=None).broker_backend == "redis"  # v1.1 alias
+    assert Settings(broker_impl="redis", _env_file=None).broker_backend == "redis"  # compat alias
     assert Settings(database_url="postgresql://u:p@h/db", _env_file=None).sqlalchemy_url.startswith(
         "postgresql+asyncpg://"
     )
@@ -91,7 +91,7 @@ def test_describe_never_contains_secret():
     assert "supersecret" not in text and "pw-secret" not in text
 
 
-# ---------------------------------------------------------------- FR-T01/T02
+# ---------------------------------------------------------------- FR-T01/FR-T02
 def test_payload_thinking_enabled():
     p = build_payload(
         ChatRequest(
@@ -124,7 +124,7 @@ def test_request_hash_normalizes():
     assert request_hash(a) == request_hash(b) != request_hash(c)
 
 
-# ---------------------------------------------------------------- §5.9 context rules
+# ---------------------------------------------------------------- context rules (FR-C01–FR-C07)
 def _m(seq, role, content, rid, reasoning=""):
     return MessageRow(
         id=str(uuid.uuid4()),
@@ -236,7 +236,7 @@ def test_estimate_tokens_cjk_vs_ascii():
     assert estimate_tokens("你好" * 100) > estimate_tokens("ab" * 100)
 
 
-# ---------------------------------------------------------------- §5.4 search formatting
+# ---------------------------------------------------------------- search formatting (FR-W02, FR-W03)
 def test_make_query_limits():
     assert len(make_query("字" * 300)) == 128
     assert make_query("  a \n b  ") == "a b"
@@ -257,9 +257,21 @@ def test_search_block_marks_untrusted_and_limits():
     assert sources[0]["id"] == "S1" and sources[0]["url"] == "https://e.com/0"
 
 
-# ---------------------------------------------------------------- §5.8 titles
+# ---------------------------------------------------------------- titles (FR-N04, FR-N05)
 def test_clean_title():
     assert clean_title('标题："Python 异步编程入门"。', 24) == "Python 异步编程入门"
     assert clean_title("  \n《旅行计划》\n多余", 24) == "旅行计划"
     assert len(clean_title("x" * 100, 24)) == 24
     assert fallback_title("一个非常非常非常非常非常非常非常非常长的问题内容", 10).endswith("…")
+
+
+# ---------------------------------------------------------------- app version (single source: pyproject.toml)
+def test_app_version_comes_from_pyproject():
+    import tomllib
+    from pathlib import Path
+
+    from app.core.version import get_version
+
+    pyproject = Path(__file__).resolve().parents[1] / "pyproject.toml"
+    expected = tomllib.loads(pyproject.read_text(encoding="utf-8"))["project"]["version"]
+    assert get_version() == expected

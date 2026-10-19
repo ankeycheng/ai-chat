@@ -1,4 +1,4 @@
-"""Pluggable SearchProvider (spec v1.2 §5.4)."""
+"""Pluggable SearchProvider (FR-W01)."""
 
 from __future__ import annotations
 

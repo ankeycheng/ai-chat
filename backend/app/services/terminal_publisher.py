@@ -1,4 +1,4 @@
-"""Idempotent terminal-event publisher + state finalisation (spec §4.2 A7, §7.3, C9).
+"""Idempotent terminal-event publisher + state finalisation (A7, C9).
 
 The terminal event payload is derived purely from the persisted run row, so the normal
 path and the repair scanner produce identical events; the Lua/atomic marker guarantees

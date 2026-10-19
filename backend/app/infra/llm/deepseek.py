@@ -11,7 +11,7 @@ from app.infra.llm.base import ChatDelta, ChatRequest, LLMError
 
 
 def build_payload(req: ChatRequest, stream: bool) -> dict:
-    """Request body per api-docs.deepseek.com (thinking toggle §5.3)."""
+    """Request body per api-docs.deepseek.com (thinking toggle: FR-T01, FR-T02)."""
     body: dict = {
         "model": req.model,
         "messages": req.messages,

@@ -1,4 +1,4 @@
-"""ORM models — mirror spec v1.2 §7 (migrations in alembic/versions are authoritative)."""
+"""ORM models — mirror the spec data model (migrations in alembic/versions are authoritative)."""
 
 from __future__ import annotations
 

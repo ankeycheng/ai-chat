@@ -1,4 +1,4 @@
-"""Redis Stream ID parsing & numeric comparison (spec §3, C7, T14)."""
+"""Redis Stream ID parsing & numeric comparison (C7, T14)."""
 
 from __future__ import annotations
 

@@ -34,7 +34,7 @@ describe('stream id (T14)', () => {
   })
 })
 
-describe('message merge (§9.4)', () => {
+describe('message merge', () => {
   it('builds a temp assistant from deltas and dedupes replayed ids', () => {
     const s = run([start('1-1'), delta('1-2', 'Hel'), delta('1-3', 'lo'), delta('1-2', 'Hel'), delta('1-10', '!')])
     const a = s.messages.filter((m) => m.role === 'assistant')
@@ -134,7 +134,7 @@ describe('message merge (§9.4)', () => {
   })
 })
 
-describe('session list sync (§5.10)', () => {
+describe('session list sync (FR-Y03)', () => {
   const base = { id: 'x', title: '新对话', title_source: 'default' as const, created_at: '2026-01-01T00:00:00Z',
     updated_at: '2026-01-01T00:00:00Z', last_event_id: '0-0', status: 'idle' as const, active_request_id: null, version: 1 }
   it('applies only newer versions; deletions win', () => {

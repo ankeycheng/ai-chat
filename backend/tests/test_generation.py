@@ -1,4 +1,4 @@
-"""Generation flow integration tests (T01–T06, T09–T11, T16, T20, T21, §5.9 history context)."""
+"""Generation flow integration tests (T01–T06, T09–T11, T16, T20, T21, FR-C02/FR-C03 history context)."""
 
 import asyncio
 import uuid
@@ -57,7 +57,7 @@ async def test_t02_t03_thinking_toggle(srv, sse_collector):
     assert "reasoning" in kinds[0] and "reasoning" not in kinds[-1]
     hist = (await srv.client.get(f"/api/sessions/{sid}/messages")).json()["items"]
     assert hist[1]["reasoning_content"] and hist[-1]["reasoning_content"] == ""
-    # reasoning is never sent back as input (§5.9)
+    # reasoning is never sent back as input (FR-C03)
     assert all("reasoning_content" not in m for r in stream_reqs for m in r.messages)
 
 

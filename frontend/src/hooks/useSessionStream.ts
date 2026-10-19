@@ -1,5 +1,5 @@
 /**
- * Per-conversation loading/recovery flow (spec v1.2 §9.3):
+ * Per-conversation loading/recovery flow (FR-E08, ADR-017):
  *   1. GET active-run (first, so a run finishing meanwhile cannot be missed)
  *   2. GET latest history window → merge
  *   3. active run → temp message, subscribe after start_event_id; else after last_event_id
@@ -157,7 +157,7 @@ export function useSessionStream(sessionId: string | null) {
     const gens = genRef
     return () => {
       gens.current++
-      close() // unsubscribing does NOT cancel the backend run (§9.5)
+      close() // unsubscribing does NOT cancel the backend run
     }
   }, [sessionId, pageActive, load, close])
 

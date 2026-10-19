@@ -1,4 +1,4 @@
-"""Application-side web search (spec v1.2 §5.4) using a pluggable SearchProvider."""
+"""Application-side web search (FR-W01–FR-W05) using a pluggable SearchProvider."""
 
 from __future__ import annotations
 

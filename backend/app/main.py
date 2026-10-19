@@ -19,6 +19,7 @@ from app.container import Container
 from app.core.config import Settings, get_settings
 from app.core.errors import AppError
 from app.core.logging import log_event, setup_logging, trace_id_var
+from app.core.version import get_version
 
 log = logging.getLogger("app")
 
@@ -49,7 +50,7 @@ def create_app(settings: Settings | None = None, container: Container | None = N
             log_event(log, "app.shutdown", instance=settings.instance_id)
             await c.shutdown()
 
-    app = FastAPI(title="AI Chat API", version="1.2.0", lifespan=lifespan)
+    app = FastAPI(title="AI Chat API", version=get_version(), lifespan=lifespan)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origin_list,

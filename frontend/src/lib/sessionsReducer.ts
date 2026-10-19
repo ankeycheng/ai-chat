@@ -1,4 +1,4 @@
-/** Conversation list state synced via the global SSE channel (spec v1.2 §5.10). */
+/** Conversation list state synced via the global SSE channel (FR-Y03). */
 import type { Session } from '../api/types'
 
 export interface SessionsState {

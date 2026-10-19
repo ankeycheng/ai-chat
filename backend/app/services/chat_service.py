@@ -1,4 +1,4 @@
-"""Message acceptance: idempotency → mutex → transactional insert → 202 (spec §5.2)."""
+"""Message acceptance: idempotency → mutex → transactional insert → 202 (FR-M01, FR-M07, C5)."""
 
 from __future__ import annotations
 

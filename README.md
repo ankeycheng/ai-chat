@@ -82,7 +82,7 @@ cp .env.example .env      # 填写 DEEPSEEK_API_KEY 与 POSTGRES_PASSWORD
 
 ## 4. 关键配置
 
-完整列表见 spec §11。最常用的配置：
+完整列表见 [`docs/spec.md`](docs/spec.md)「部署与配置」一章。最常用的配置：
 
 | 变量 | 默认 | 说明 |
 |---|---|---|

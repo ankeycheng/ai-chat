@@ -1,4 +1,4 @@
-/** Global conversation-list sync over /api/events (spec v1.2 §5.10). */
+/** Global conversation-list sync over /api/events (FR-Y01). */
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { api, globalEventsUrl } from '../api/client'
 import type { Session } from '../api/types'

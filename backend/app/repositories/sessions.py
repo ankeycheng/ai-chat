@@ -81,7 +81,7 @@ class SessionRepository:
         """Conditionally flip idle→generating and reserve one sequence number.
 
         Returns the reserved user ``sequence_no`` or None when the session is not idle.
-        The conditional UPDATE is the DB-level mutex backing the Redis lock (§5.2 锁要求).
+        The conditional UPDATE is the DB-level mutex backing the Redis lock (FR-M06).
         """
         res = await self.db.execute(
             update(SessionRow)

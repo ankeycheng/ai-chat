@@ -1,4 +1,4 @@
-"""Lease monitor + terminal repair scanner (FR-M08, FR-F02, §7.3, C9, C11).
+"""Lease monitor + terminal repair scanner (FR-M08, FR-F02, C9, C11).
 
 Runs on every instance. All state transitions are conditional DB updates, so several
 monitors (and a still-alive worker) can race safely; terminal publishing is idempotent.

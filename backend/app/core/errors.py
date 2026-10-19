@@ -1,4 +1,4 @@
-"""Application error model (spec §8.2)."""
+"""Application error model: stable error codes + unified HTTP error body."""
 
 from __future__ import annotations
 

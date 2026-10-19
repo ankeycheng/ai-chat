@@ -1,4 +1,4 @@
-"""Application configuration (spec v1.2 §11).
+"""Application configuration.
 
 Profiles (APP_PROFILE) provide preset defaults so one variable switches between
 ``dev`` (SQLite + memory broker, single process) and ``prod`` (PostgreSQL + Redis).
@@ -21,7 +21,7 @@ PROFILE_PRESETS: dict[str, dict[str, str]] = {
 
 
 class ConfigError(ValueError):
-    """Raised when the configuration violates a startup rule (§11.2)."""
+    """Raised when the configuration violates a startup rule (V1–V7)."""
 
 
 class Settings(BaseSettings):
@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     expected_replicas: int = Field(1, ge=1)  # number of API instances behind the LB
     web_concurrency: int = Field(1, ge=1)  # uvicorn workers per container
 
-    # --- storage / broker switches (§11.3) ---
+    # --- storage / broker switches ---
     db_backend: Literal["postgres", "sqlite"] | None = None
     database_url: str | None = None
     sqlite_path: str = "./data/ai-chat.db"
@@ -47,7 +47,7 @@ class Settings(BaseSettings):
     db_max_overflow: int = 20
 
     broker_backend: Literal["redis", "memory"] | None = None
-    broker_impl: Literal["redis", "memory"] | None = None  # v1.1 alias
+    broker_impl: Literal["redis", "memory"] | None = None  # compat alias of broker_backend
     redis_url: str = "redis://localhost:6379/0"
     redis_max_connections: int = 2000
 
@@ -68,14 +68,14 @@ class Settings(BaseSettings):
     upstream_connect_timeout_seconds: float = 10
     upstream_read_timeout_seconds: float = 120
 
-    # --- search (§5.4) ---
+    # --- search (FR-W01–FR-W05) ---
     search_provider: Literal["deepseek", "disabled", "fake"] = "deepseek"
     web_search_count: int = Field(5, ge=1, le=50)
     web_context_max_chars: int = Field(12000, ge=500)
     web_source_max_chars: int = Field(2500, ge=100)
     search_timeout_seconds: float = 15
 
-    # --- title generation (§5.8) ---
+    # --- title generation (FR-N03, FR-N04, FR-N08) ---
     title_generation_enabled: bool = True
     title_max_chars: int = Field(24, ge=4, le=100)
     title_timeout_seconds: float = 20
@@ -145,7 +145,7 @@ class Settings(BaseSettings):
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
 
     def validate_startup(self) -> list[str]:
-        """Enforce §11.2 startup rules. Returns warnings; raises ConfigError on violations."""
+        """Enforce startup rules V1–V7. Returns warnings; raises ConfigError on violations."""
         warnings: list[str] = []
         multi = self.expected_replicas > 1 or self.web_concurrency > 1
         if self.broker_backend == "memory" and multi:
@@ -161,7 +161,7 @@ class Settings(BaseSettings):
         if self.database_url and (self.db_backend == "sqlite") != self.is_sqlite:
             raise ConfigError("DB_BACKEND 与 DATABASE_URL 的协议不一致")
         if self.broker_impl and self.broker_backend != self.broker_impl:
-            raise ConfigError("BROKER_BACKEND 与 BROKER_IMPL（v1.1 别名）取值冲突")
+            raise ConfigError("BROKER_BACKEND 与 BROKER_IMPL（兼容别名）取值冲突")
         if self.llm_provider == "deepseek" and not self.deepseek_api_key.get_secret_value():
             if self.app_profile == "prod":
                 raise ConfigError("DEEPSEEK_API_KEY 未配置")

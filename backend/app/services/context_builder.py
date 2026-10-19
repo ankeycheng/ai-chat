@@ -1,4 +1,4 @@
-"""History context building rules (spec v1.2 §5.9).
+"""History context building rules (FR-C01–FR-C07).
 
 * Only *completed* turns (user message + its assistant reply) are included; user
   messages of failed/interrupted runs are skipped.

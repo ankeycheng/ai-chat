@@ -1,4 +1,4 @@
-"""User-level (global) sync channel (spec v1.2 §5.10).
+"""User-level (global) sync channel (A9, FR-Y02, FR-Y03).
 
 Every change to the conversation list (created / updated / deleted, incl. title,
 status and updated_at) is appended to the global stream ``events:global`` so that all

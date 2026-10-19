@@ -1,4 +1,4 @@
-"""Background generation worker (spec §5.2 steps 6–10, lease/heartbeat §5.2 锁要求)."""
+"""Background generation worker: start → stream → terminal, under lease/heartbeat (FR-M04, FR-M05, C11, C15)."""
 
 from __future__ import annotations
 
@@ -191,7 +191,7 @@ class GenerationWorker:
         last_id = start_id
         t_accept = time.perf_counter()
 
-        # Web search (application side, FR-W01..W05)
+        # Web search (application side, FR-W01–FR-W05)
         sources: list[dict] = []
         search_block = None
         if run.web_search:
@@ -342,7 +342,7 @@ class GenerationWorker:
             content_chars=sum(map(len, content)),
             reasoning_chars=sum(map(len, reasoning)),
         )
-        # Title generation is asynchronous and never blocks `done` (§5.8)
+        # Title generation is asynchronous and never blocks `done` (FR-N02)
         self._spawn(self.titles.maybe_generate(sid), f"title:{sid}")
 
     async def _publish_terminal_safely(self, sid: str, rid: str) -> None:

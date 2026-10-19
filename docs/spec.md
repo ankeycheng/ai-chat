@@ -933,7 +933,7 @@ Compose 专用（根目录 `.env`，见 `.env.example`）：`HTTP_PORT`（默认
 
 ### 11.4 数据库迁移
 
-- 唯一迁移链 `backend/alembic/versions/`（`0001_initial_v12`），`alembic/env.py` 异步执行并从 `Settings` 取 URL；SQLite 使用 `render_as_batch`。
+- 唯一迁移链 `backend/alembic/versions/`（文件 `0001_initial.py`，revision ID `0001_initial_v12`；revision ID 已记录在已部署数据库的 `alembic_version` 表中，不得修改），`alembic/env.py` 异步执行并从 `Settings` 取 URL；SQLite 使用 `render_as_batch`。
 - 生产：Compose 的 `migrate` 服务在 backend 启动前执行；手动执行 `cd backend && uv run alembic upgrade head`。
 - 开发：`RUN_MIGRATIONS_ON_STARTUP=true` 自动迁移。
 - 每个迁移必须在 PostgreSQL 与 SQLite 上同时验证 `upgrade head` 与 `downgrade base`。

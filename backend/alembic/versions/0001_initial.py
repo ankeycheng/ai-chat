@@ -1,7 +1,7 @@
-"""Initial schema for spec v1.2 (sessions / generation_runs / messages).
+"""Initial schema (sessions / generation_runs / messages).
 
 Same revision chain for PostgreSQL and SQLite; dialect-specific DDL is branched
-explicitly below (spec v1.2 §7: no assumption that one DDL fits both).
+explicitly below (ADR-014: no assumption that one DDL fits both).
 
 Revision ID: 0001_initial_v12
 Revises:
@@ -102,7 +102,7 @@ def upgrade() -> None:
 
     if dialect == "postgresql":
         # case-insensitive search helpers (ILIKE); a pg_trgm GIN index is recommended but optional
-        # because CREATE EXTENSION needs elevated privileges (spec v1.2 §5.11).
+        # because CREATE EXTENSION needs elevated privileges (NFR-13).
         op.execute("CREATE INDEX IF NOT EXISTS ix_sessions_title_lower ON sessions (lower(title))")
     elif dialect == "sqlite":
         op.execute("CREATE INDEX IF NOT EXISTS ix_sessions_title_lower ON sessions (lower(title))")

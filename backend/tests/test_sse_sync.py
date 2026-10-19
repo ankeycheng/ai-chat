@@ -105,7 +105,7 @@ async def test_sse_disconnect_cleans_up(srv, sse_collector):
     assert g._value.get() == before  # FR-E05: loop terminated, no leaked coroutine
 
 
-# ------------------------------------------------------------------ global sync (§5.10)
+# ------------------------------------------------------------------ global sync (T26, T27)
 async def test_global_sync_created_renamed_title_deleted(srv, sse_collector):
     async with sse_collector(srv.base_url, "/api/events") as g:
         await g.wait_event("ready")
@@ -147,7 +147,7 @@ async def test_global_sync_reconnect_with_last_event_id(srv, sse_collector):
     assert len(g2.named("session.created")) == 1
 
 
-# ------------------------------------------------------------------ titles (§5.8)
+# ------------------------------------------------------------------ titles (T28, T29)
 async def test_title_generated_after_first_turn_only(srv):
     srv.llm.title = '标题："杭州旅行规划"。'
     sid = await srv.new_session()
@@ -189,7 +189,7 @@ async def test_title_fallback_and_user_title_preserved(srv):
     assert (await srv.client.get(f"/api/sessions/{sid2}")).json()["title"] == "手动标题"
 
 
-# ------------------------------------------------------------------ list & search (§5.11)
+# ------------------------------------------------------------------ list & search (T30, T31, T33)
 async def test_list_order_and_pagination(srv):
     ids = [await srv.new_session() for _ in range(5)]
     r = (await srv.client.get("/api/sessions", params={"limit": 2})).json()
@@ -232,7 +232,7 @@ async def test_search_ignores_reasoning(srv):
     assert r == []
 
 
-# ------------------------------------------------------------------ validation (§8.1)
+# ------------------------------------------------------------------ request validation
 async def test_request_validation(srv):
     sid = await srv.new_session()
     url = f"/api/sessions/{sid}/messages"

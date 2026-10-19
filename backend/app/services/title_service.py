@@ -1,4 +1,4 @@
-"""Automatic conversation title generation (spec v1.2 §5.8)."""
+"""Automatic conversation title generation (FR-N01–FR-N08)."""
 
 from __future__ import annotations
 
